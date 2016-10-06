@@ -63,7 +63,7 @@ if(isset($_GET['code'])){
 
 }else {
 
-	echo "<a href='{$helper->getLoginUrl('http://localhost:8888/giveaway/index.php',$permissions)}'>Log In</a>";
+	echo "<a href='{$helper->getLoginUrl('http://'. $_SERVER['SERVER_NAME'].(SERVER_PORT+0>0?':'.SERVER_PORT:'') . $_SERVER['REQUEST_URI'].'index.php',$permissions)}'>Log In</a>";
 }
 //
 ?>
