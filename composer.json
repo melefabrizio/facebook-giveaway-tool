@@ -1,0 +1,17 @@
+{
+    "name": "fabriziomele/facebook-giveaway-tool",
+    "description": "Giveaway tool for Facebook",
+    "keywords": ["facebook", "giveaway"],
+    "type": "Application",
+    "license": "GPL",
+
+    "require": {
+        "php": "^5.4|^7.0",
+        "facebook/php-sdk-v4" : "5.3.*"
+
+    }
+
+
+
+
+}

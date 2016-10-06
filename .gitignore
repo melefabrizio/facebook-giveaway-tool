@@ -1,0 +1,7 @@
+conf.php
+composer.phar
+composer.lock
+.idea/*
+phpcs.xml.dist
+/src/
+vendor/*
