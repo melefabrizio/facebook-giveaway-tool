@@ -18,7 +18,7 @@ if(isset($_GET['logout'])){
 require 'vendor/autoload.php';
 
 require 'ApiConnector.php';
-include 'conf.php';
+include_once 'conf.php';
 $postid= "192526417824469";
 $pageid ="132224490521329";
 
@@ -53,6 +53,7 @@ if(isset($_GET['code'])){
 		<input type="text" value="132224490521329" name="pageid"/><br>
 		<label for="blob">Blob</label>
 		<input type="text" name="blob"/><br>
+
 		<input type="submit" name="submit"/>
 	</form>
 

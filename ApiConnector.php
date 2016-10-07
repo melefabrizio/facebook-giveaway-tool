@@ -1,16 +1,17 @@
 <?php
 
-include 'conf.php';
+include_once 'conf.php';
 
 class ApiConnector
 {
-	function __construct($userId, $postId,$accessToken,$blob)
+	function __construct($userId, $postId,$accessToken)
 	{
 
 		$this->user = $userId;
 		$this->post = $postId;
 		$this->accessToken = $accessToken;
-		$this->blob = $blob;
+		$this->blob = null;
+
 
 
 	}
@@ -32,9 +33,29 @@ class ApiConnector
 		]);
 
 		$fb->setDefaultAccessToken($this->accessToken);
-		$response = $fb->get("/{$this->user}_{$this->post}/likes?limit=5000");
+		$response = $fb->get("/{$this->user}_{$this->post}/likes?filter=stream&summary=true&limit=".API_REQUEST_LIMIT);
+		$body = $response->getBody();
 		$body = json_decode($response->getBody());
 		$data = $body->data;
+		$currentCount = count($data);
+		$totalCount = $body->summary->total_count;
+		$nextHash = $body->paging->cursors->after;
+		while($currentCount<$totalCount){
+			$response = $fb->get("/{$this->user}_{$this->post}/likes?after=$nextHash&filter=stream&summary=true&limit=".API_REQUEST_LIMIT);
+			$body = json_decode($response->getBody());
+			$data1 = $body->data;
+
+			$nextHash = $body->paging->cursors->after;
+			foreach ($data1 as $item1) {
+				array_push($data, $item1);
+
+			}
+			$currentCount += count($data);
+
+		}
+
+
+
 		$likes = array();
 		foreach ($data as $item) {
 			array_push($likes, array(
@@ -56,10 +77,29 @@ class ApiConnector
 		]);
 
 		$fb->setDefaultAccessToken($this->accessToken);
-		$response = $fb->get("/{$this->user}_{$this->post}/comments?limit=5000");
+		$response = $fb->get("/{$this->user}_{$this->post}/comments?filter=stream&summary=true&limit=".API_REQUEST_LIMIT);
 		$body = $response->getBody();
 		$body = json_decode($response->getBody());
 		$data = $body->data;
+		$currentCount = count($data);
+		$totalCount = $body->summary->total_count;
+		$nextHash = $body->paging->cursors->after;
+		while($currentCount<$totalCount){
+			$response = $fb->get("/{$this->user}_{$this->post}/comments?after=$nextHash&filter=stream&summary=true&limit=".API_REQUEST_LIMIT);
+			$body = json_decode($response->getBody());
+			$data1 = $body->data;
+
+			$nextHash = $body->paging->cursors->after;
+			foreach ($data1 as $item1) {
+				array_push($data, $item1);
+
+			}
+			$currentCount += count($data);
+
+		}
+
+
+
 		$comments = array();
 		foreach ($data as $item) {
 			array_push($comments, array(
@@ -84,6 +124,7 @@ class ApiConnector
 					if ($comment['from'] == $like['id']) {
 						array_push($data, array(
 							'from' => $like['name'],
+							'from_id' => $comment['from'],
 							'message' => $comment['message']
 						));
 						break;
